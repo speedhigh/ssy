@@ -1,0 +1,1076 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>加油孙诗雨</title>
+    <style>
+      :root {
+        --primary-color: #ffb6c1; /* 柔和的粉色 */
+        --secondary-color: #fff0f5; /* 淡粉色 */
+        --accent-color: #ffc0cb; /* 浅粉色 */
+        --text-color: #8b5a5a; /* 温暖的棕色 */
+        --purple-text: #9b6b9b; /* 偏紫色 */
+        --background-color: #fff5f5; /* 淡粉色背景 */
+        --success-color: #98fb98; /* 柔和的绿色 */
+        --warning-color: #ffb6c1; /* 柔和的红色 */
+      }
+
+      @keyframes float {
+        0% {
+          transform: translateY(0px) rotate(0deg);
+        }
+        50% {
+          transform: translateY(-8px) rotate(5deg);
+        }
+        100% {
+          transform: translateY(0px) rotate(0deg);
+        }
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes sparkle {
+        0% {
+          opacity: 0;
+          transform: scale(0.5) rotate(0deg);
+        }
+        50% {
+          opacity: 1;
+          transform: scale(1) rotate(180deg);
+        }
+        100% {
+          opacity: 0;
+          transform: scale(0.5) rotate(360deg);
+        }
+      }
+
+      @keyframes cloudFloat {
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+        background: url('https://images.unsplash.com/photo-1519681393784-d120267933ba?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80')
+          no-repeat center center fixed;
+        background-size: cover;
+        font-family: 'Arial', sans-serif;
+        touch-action: none;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        user-select: none;
+      }
+
+      body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(8px);
+        z-index: -1;
+      }
+
+      #game-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(5px);
+        overflow: hidden;
+      }
+
+      #character {
+        position: absolute;
+        width: 50px;
+        height: 60px;
+        bottom: 20%;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 50px;
+        text-align: center;
+        line-height: 60px;
+        z-index: 2;
+        animation: float 3s ease-in-out infinite;
+        filter: drop-shadow(0 4px 8px rgba(255, 182, 193, 0.3));
+      }
+
+      .heart {
+        position: absolute;
+        width: 50px;
+        height: 50px;
+        font-size: 50px;
+        text-align: center;
+        line-height: 50px;
+        z-index: 1;
+        animation: float 2s ease-in-out infinite;
+        filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+      }
+
+      .level-indicator {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        font-size: 16px;
+        color: var(--purple-text);
+        background: rgba(255, 255, 255, 0.15);
+        padding: 4px 10px;
+        border-radius: 15px;
+        z-index: 3;
+        box-shadow: 0 2px 8px rgba(155, 107, 155, 0.1);
+        backdrop-filter: blur(5px);
+        border: 1px solid rgba(155, 107, 155, 0.2);
+      }
+
+      #score {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 24px;
+        color: var(--purple-text);
+        z-index: 3;
+        background: rgba(255, 255, 255, 0.15);
+        padding: 8px 20px;
+        border-radius: 20px;
+        box-shadow: 0 4px 15px rgba(155, 107, 155, 0.1);
+        backdrop-filter: blur(5px);
+        animation: fadeIn 0.5s ease-out;
+        border: 1px solid rgba(155, 107, 155, 0.2);
+      }
+
+      #timer {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        font-size: 16px;
+        color: var(--purple-text);
+        z-index: 3;
+        background: rgba(255, 255, 255, 0.15);
+        padding: 4px 10px;
+        border-radius: 15px;
+        box-shadow: 0 2px 8px rgba(155, 107, 155, 0.1);
+        backdrop-filter: blur(5px);
+        animation: fadeIn 0.5s ease-out;
+        border: 1px solid rgba(155, 107, 155, 0.2);
+      }
+
+      #message {
+        position: fixed;
+        top: 15%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 24px;
+        color: var(--purple-text);
+        text-align: center;
+        opacity: 0;
+        transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 3;
+        text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+        background: rgba(255, 255, 255, 0.15);
+        padding: 12px 24px;
+        border-radius: 20px;
+        box-shadow: 0 4px 15px rgba(155, 107, 155, 0.1);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(155, 107, 155, 0.2);
+        min-width: 200px;
+        max-width: 80%;
+        word-wrap: break-word;
+      }
+
+      #message::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+        border-radius: 20px;
+        z-index: -1;
+      }
+
+      @keyframes messageFloat {
+        0% {
+          transform: translate(-50%, -50%) translateY(0);
+        }
+        50% {
+          transform: translate(-50%, -50%) translateY(-5px);
+        }
+        100% {
+          transform: translate(-50%, -50%) translateY(0);
+        }
+      }
+
+      #message.show {
+        animation: messageFloat 2s ease-in-out infinite;
+      }
+
+      #start-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.8);
+        z-index: 4;
+        backdrop-filter: blur(10px);
+      }
+
+      #start-screen h1 {
+        font-size: 48px;
+        color: var(--purple-text);
+        margin-bottom: 30px;
+        text-align: center;
+        animation: fadeIn 0.8s ease-out;
+        text-shadow: 2px 2px 4px rgba(255, 182, 193, 0.2);
+      }
+
+      #start-screen p {
+        font-size: 24px;
+        color: var(--purple-text);
+        margin-bottom: 50px;
+        text-align: center;
+        animation: fadeIn 1s ease-out;
+      }
+
+      #start-button {
+        padding: 15px 40px;
+        font-size: 24px;
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 40px;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 15px rgba(255, 182, 193, 0.3);
+        animation: pulse 2s infinite;
+      }
+
+      #start-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(255, 182, 193, 0.4);
+      }
+
+      #controls {
+        position: fixed;
+        bottom: 5%;
+        left: 0;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        gap: 60px;
+        padding: 20px;
+        z-index: 3;
+      }
+
+      .control-button {
+        width: 80px;
+        height: 80px;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 40px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: var(--purple-text);
+        font-size: 36px;
+        cursor: pointer;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+        box-shadow: 0 4px 15px rgba(255, 182, 193, 0.2);
+        backdrop-filter: blur(5px);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 2px solid rgba(155, 107, 155, 0.3);
+      }
+
+      .control-button:active {
+        transform: scale(0.95);
+        box-shadow: 0 2px 8px rgba(255, 182, 193, 0.2);
+      }
+
+      #music-control {
+        position: fixed;
+        top: 30px;
+        right: 30px;
+        width: 60px;
+        height: 60px;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 30px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: var(--purple-text);
+        font-size: 28px;
+        cursor: pointer;
+        z-index: 3;
+        box-shadow: 0 4px 15px rgba(255, 182, 193, 0.2);
+        backdrop-filter: blur(5px);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 2px solid rgba(155, 107, 155, 0.3);
+      }
+
+      #music-control:active {
+        transform: scale(0.95);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      /* 添加一些装饰元素 */
+      .decoration {
+        position: absolute;
+        width: 100px;
+        height: 100px;
+        background: rgba(255, 107, 107, 0.1);
+        border-radius: 50%;
+        z-index: 0;
+      }
+
+      .decoration:nth-child(1) {
+        top: 20px;
+        left: 20px;
+        animation: pulse 4s infinite;
+      }
+
+      .decoration:nth-child(2) {
+        bottom: 20px;
+        right: 20px;
+        animation: pulse 4s infinite 2s;
+      }
+
+      .falling-object {
+        position: absolute;
+        width: 40px;
+        height: 40px;
+        z-index: 1;
+        animation: float 2s ease-in-out infinite;
+        filter: drop-shadow(0 4px 8px rgba(255, 255, 255, 0.3));
+        backdrop-filter: blur(5px);
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.2);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+      }
+
+      .falling-object::before {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: inherit;
+        border-radius: inherit;
+        filter: blur(2px);
+        z-index: -1;
+      }
+
+      .falling-object.star {
+        background: rgba(255, 255, 255, 0.2);
+        border-color: rgba(255, 255, 255, 0.3);
+      }
+
+      .falling-object.star::after {
+        content: '★';
+        font-size: 24px;
+        color: rgba(255, 255, 255, 0.9);
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+      }
+
+      .falling-object.heart {
+        background: rgba(255, 105, 180, 0.2);
+        border-color: rgba(255, 105, 180, 0.3);
+      }
+
+      .falling-object.heart::after {
+        content: '❤';
+        font-size: 24px;
+        color: rgba(255, 105, 180, 0.8);
+        text-shadow: 0 0 10px rgba(255, 105, 180, 0.5);
+      }
+
+      .falling-object.bomb {
+        background: rgba(255, 0, 0, 0.2);
+        border-color: rgba(255, 0, 0, 0.3);
+      }
+
+      .falling-object.bomb::after {
+        content: '💣';
+        font-size: 24px;
+        color: rgba(255, 0, 0, 0.8);
+        text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+      }
+
+      .heart {
+        color: #ffb6c1;
+      }
+      .star {
+        color: #ffd700;
+      }
+      .gift {
+        color: #98fb98;
+      }
+      .bomb {
+        color: #ffb6c1;
+      }
+
+      @keyframes shake {
+        0% {
+          transform: translateX(0);
+        }
+        25% {
+          transform: translateX(-5px);
+        }
+        50% {
+          transform: translateX(5px);
+        }
+        75% {
+          transform: translateX(-5px);
+        }
+        100% {
+          transform: translateX(0);
+        }
+      }
+
+      .shake {
+        animation: shake 0.5s ease-in-out;
+      }
+
+      .sparkle {
+        position: absolute;
+        width: 15px;
+        height: 15px;
+        background: rgba(255, 255, 255, 0.8);
+        border-radius: 50%;
+        animation: sparkle 1.5s infinite;
+        pointer-events: none;
+      }
+
+      #level-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.8);
+        z-index: 5;
+        backdrop-filter: blur(10px);
+      }
+
+      #level-screen h2 {
+        font-size: 36px;
+        color: var(--purple-text);
+        margin-bottom: 20px;
+        text-align: center;
+        animation: fadeIn 0.8s ease-out;
+        text-shadow: 2px 2px 4px rgba(255, 182, 193, 0.2);
+      }
+
+      #level-screen p {
+        font-size: 24px;
+        color: var(--purple-text);
+        margin-bottom: 30px;
+        text-align: center;
+        animation: fadeIn 1s ease-out;
+        max-width: 80%;
+        line-height: 1.5;
+      }
+
+      #level-screen .objective {
+        font-size: 28px;
+        color: var(--primary-color);
+        margin-bottom: 40px;
+        text-align: center;
+        animation: fadeIn 1.2s ease-out;
+        font-weight: bold;
+      }
+
+      #level-screen button {
+        padding: 15px 40px;
+        font-size: 24px;
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 40px;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 15px rgba(255, 182, 193, 0.3);
+        animation: pulse 2s infinite;
+      }
+
+      #victory-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.9);
+        z-index: 6;
+        backdrop-filter: blur(10px);
+      }
+
+      #victory-screen h1 {
+        font-size: 48px;
+        color: var(--primary-color);
+        margin-bottom: 30px;
+        text-align: center;
+        animation: fadeIn 0.8s ease-out;
+      }
+
+      #victory-screen p {
+        font-size: 24px;
+        color: var(--purple-text);
+        margin-bottom: 20px;
+        text-align: center;
+        animation: fadeIn 1s ease-out;
+        max-width: 80%;
+        line-height: 1.5;
+      }
+
+      .confetti {
+        position: fixed;
+        width: 10px;
+        height: 10px;
+        background: var(--primary-color);
+        animation: confetti 5s ease-in-out infinite;
+        z-index: 7;
+      }
+
+      @keyframes confetti {
+        0% {
+          transform: translateY(-100vh) rotate(0deg);
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(100vh) rotate(360deg);
+          opacity: 0;
+        }
+      }
+
+      #failure-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.9);
+        z-index: 6;
+        backdrop-filter: blur(10px);
+      }
+
+      #failure-screen h1 {
+        font-size: 36px;
+        color: var(--purple-text);
+        margin-bottom: 20px;
+        text-align: center;
+        animation: fadeIn 0.8s ease-out;
+      }
+
+      #failure-screen p {
+        font-size: 24px;
+        color: var(--purple-text);
+        margin-bottom: 30px;
+        text-align: center;
+        animation: fadeIn 1s ease-out;
+        max-width: 80%;
+        line-height: 1.5;
+      }
+
+      #failure-screen button {
+        padding: 15px 40px;
+        font-size: 24px;
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 40px;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 15px rgba(255, 182, 193, 0.3);
+        animation: pulse 2s infinite;
+      }
+
+      #failure-screen button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(255, 182, 193, 0.4);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="game-container">
+      <div class="cloud"></div>
+      <div class="cloud"></div>
+      <div class="cloud"></div>
+      <div id="music-control">🎵</div>
+      <div id="start-screen">
+        <h1>加油孙诗雨！</h1>
+        <p style="font-size: 20px">让我们一起开始这段奇妙的旅程吧！</p>
+        <button id="start-button">开始游戏</button>
+      </div>
+      <div id="victory-screen">
+        <h1>恭喜通关！</h1>
+        <p id="victory-message"></p>
+        <button id="victory-retry-button">重新挑战</button>
+      </div>
+      <div id="failure-screen">
+        <h1>继续加油！</h1>
+        <p id="failure-message"></p>
+        <button id="failure-retry-button">重新挑战</button>
+      </div>
+      <div class="level-indicator">
+        最高分: <span id="best-score">0</span>
+      </div>
+      <div id="score">0</div>
+      <div id="timer">0:00</div>
+      <div id="character">👧</div>
+      <div id="message"></div>
+      <div id="controls">
+        <div class="control-button" id="left-button">←</div>
+        <div class="control-button" id="right-button">→</div>
+      </div>
+    </div>
+
+    <audio id="bgm" loop>
+      <source
+        src="https://music.163.com/song/media/outer/url?id=1306248414.mp3"
+        type="audio/mpeg"
+      />
+    </audio>
+    <audio id="collect-sound">
+      <source
+        src="https://assets.mixkit.co/active_storage/sfx/2570/2570-preview.mp3"
+        type="audio/mpeg"
+      />
+    </audio>
+    <audio id="bomb-sound">
+      <source
+        src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3"
+        type="audio/mpeg"
+      />
+    </audio>
+
+    <script>
+      const gameContainer = document.getElementById('game-container')
+      const character = document.getElementById('character')
+      const scoreElement = document.getElementById('score')
+      const timerElement = document.getElementById('timer')
+      const messageElement = document.getElementById('message')
+      const startScreen = document.getElementById('start-screen')
+      const startButton = document.getElementById('start-button')
+      const leftButton = document.getElementById('left-button')
+      const rightButton = document.getElementById('right-button')
+      const musicControl = document.getElementById('music-control')
+      const bgm = document.getElementById('bgm')
+      const collectSound = document.getElementById('collect-sound')
+      const bombSound = document.getElementById('bomb-sound')
+
+      const messages = [
+        '加油孙诗雨，你是最棒的！',
+        '一起去看星星吧！',
+        '加油孙诗雨，你是最棒的！',
+        '一起去看星星吧！',
+        '一起去看星星吧！',
+        
+        '一起追逐梦想！',
+        '今天也要元气满满！',
+        '要一直保持可爱！',
+        '你的笑容最治愈！',
+        '一起去看星星吧！',
+
+        '遇见你真好！',
+        '爱你哦！',
+        '你的努力会有回报！',
+        '一起追逐梦想！',
+        '一起去看星星吧！',
+      ]
+
+      const fallingObjects = [
+        { type: 'star', emoji: '⭐', points: 1, sound: collectSound, probability: 0.5 },
+        { type: 'heart', emoji: '❤️', points: 2, sound: collectSound, probability: 0.25 },
+        { type: 'bomb', emoji: '💣', points: -2, sound: bombSound, probability: 0.25 }
+      ]
+
+      let score = 0
+      let timeLeft = 0
+      let gameInterval
+      let timerInterval
+      let characterPosition = 400
+      let characterSpeed = 5
+      let isMovingLeft = false
+      let isMovingRight = false
+      let isMusicPlaying = false
+      let gameActive = false
+      let bestScore = localStorage.getItem('bestScore') || 0
+
+      // 音乐控制
+      musicControl.addEventListener('click', () => {
+        if (isMusicPlaying) {
+          bgm.pause()
+          musicControl.textContent = '🔇'
+        } else {
+          bgm.play().catch((error) => {
+            console.log('音乐播放失败:', error)
+            alert('请点击页面任意位置以允许播放音乐')
+          })
+          musicControl.textContent = '🎵'
+        }
+        isMusicPlaying = !isMusicPlaying
+      })
+
+      // 移动控制
+      function updateCharacterPosition() {
+        if (!gameActive) return
+
+        if (isMovingLeft && characterPosition > 0) {
+          characterPosition -= characterSpeed
+        }
+        if (isMovingRight && characterPosition < gameContainer.offsetWidth - 60) {
+          characterPosition += characterSpeed
+        }
+        character.style.left = characterPosition + 'px'
+      }
+
+      // 触摸控制
+      leftButton.addEventListener('touchstart', (e) => {
+        e.preventDefault()
+        isMovingLeft = true
+      })
+
+      leftButton.addEventListener('touchend', (e) => {
+        e.preventDefault()
+        isMovingLeft = false
+      })
+
+      rightButton.addEventListener('touchstart', (e) => {
+        e.preventDefault()
+        isMovingRight = true
+      })
+
+      rightButton.addEventListener('touchend', (e) => {
+        e.preventDefault()
+        isMovingRight = false
+      })
+
+      // 鼠标控制（用于测试）
+      leftButton.addEventListener('mousedown', () => {
+        isMovingLeft = true
+      })
+
+      leftButton.addEventListener('mouseup', () => {
+        isMovingLeft = false
+      })
+
+      rightButton.addEventListener('mousedown', () => {
+        isMovingRight = true
+      })
+
+      rightButton.addEventListener('mouseup', () => {
+        isMovingRight = false
+      })
+
+      // 添加点击事件以允许音频播放
+      document.addEventListener(
+        'click',
+        () => {
+          if (!isMusicPlaying) {
+            bgm.play().catch((error) => {
+              console.log('音乐播放失败:', error)
+            })
+          }
+        },
+        { once: true },
+      )
+
+      // 显示消息
+      function showMessage() {
+        let availableMessages = messages.slice(0, 5) // 初始只有前10条消息
+        
+        // 随时间解锁更多消息
+        if (timeLeft >= 30) {
+          availableMessages = messages.slice(0, 10)
+        }
+        if (timeLeft >= 60) {
+          availableMessages = messages.slice(0, 15)
+        }
+
+        const randomMessage = availableMessages[Math.floor(Math.random() * availableMessages.length)]
+        messageElement.textContent = randomMessage
+        messageElement.style.opacity = 1
+        messageElement.classList.add('show')
+        setTimeout(() => {
+          messageElement.style.opacity = 0
+          messageElement.classList.remove('show')
+        }, 2000)
+      }
+
+      function startGame() {
+        startScreen.style.display = 'none'
+        score = 0
+        timeLeft = 0
+        updateScoreDisplay()
+        gameActive = true
+
+        // 开始背景音乐
+        if (!isMusicPlaying) {
+          bgm.play().catch((error) => {
+            console.log('音乐播放失败:', error)
+            alert('请点击页面任意位置以允许播放音乐')
+          })
+          isMusicPlaying = true
+          musicControl.textContent = '🎵'
+        }
+
+        // 开始生成物体
+        gameInterval = setInterval(createFallingObject, 1500)
+
+        // 计时器
+        timerInterval = setInterval(() => {
+          timeLeft++
+          const minutes = Math.floor(timeLeft / 60)
+          const seconds = timeLeft % 60
+          timerElement.textContent = `时间: ${minutes}:${seconds.toString().padStart(2, '0')}`
+
+          // 检查是否达到5分20秒
+          if (timeLeft === 320) {
+            endGame(true)
+          }
+        }, 1000)
+
+        // 添加角色移动更新
+        const moveInterval = setInterval(updateCharacterPosition, 16)
+        gameContainer.addEventListener('gameEnd', () => {
+          clearInterval(moveInterval)
+        })
+      }
+
+      function endGame(isSpecialEnding = false) {
+        clearInterval(gameInterval)
+        clearInterval(timerInterval)
+        gameActive = false
+
+        // 更新最高分
+        if (score > bestScore) {
+          bestScore = score
+          localStorage.setItem('bestScore', bestScore)
+          updateBestScoreDisplay()
+          showVictoryScreen(isSpecialEnding)
+        } else {
+          showFailureScreen(isSpecialEnding)
+        }
+      }
+
+      function showVictoryScreen(isSpecialEnding) {
+        document.getElementById('victory-message').textContent = isSpecialEnding 
+          ? `通关成功！你是最棒的！爱你哦！💐` 
+          : `恭喜你创造了新纪录！获得了${score}分！💐`
+        document.getElementById('victory-screen').style.display = 'flex'
+
+        // 创建彩带效果
+        for (let i = 0; i < 50; i++) {
+          createConfetti()
+        }
+      }
+
+      function createConfetti() {
+        const confetti = document.createElement('div')
+        confetti.className = 'confetti'
+        confetti.style.left = Math.random() * window.innerWidth + 'px'
+        confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`
+        document.body.appendChild(confetti)
+        setTimeout(() => confetti.remove(), 5000)
+      }
+
+      function showFailureScreen(isSpecialEnding) {
+        document.getElementById('failure-message').textContent = isSpecialEnding
+          ? `通关成功！你是最棒的！爱你哦！💐`
+          : `你获得了${score}分！最高纪录是${bestScore}分，继续加油！`
+        document.getElementById('failure-screen').style.display = 'flex'
+      }
+
+      function retryGame() {
+        document.getElementById('failure-screen').style.display = 'none'
+        document.getElementById('victory-screen').style.display = 'none'
+        startGame()
+      }
+
+      // 修改开始游戏按钮事件
+      startButton.addEventListener('click', () => {
+        startScreen.style.display = 'none'
+        startGame()
+      })
+
+      // 添加重新挑战按钮事件监听
+      document.getElementById('victory-retry-button').addEventListener('click', retryGame)
+      document.getElementById('failure-retry-button').addEventListener('click', retryGame)
+
+      // 更新分数显示
+      function updateScoreDisplay() {
+        scoreElement.textContent = score
+        
+        // 检查是否需要显示鼓励消息
+        if (messages.some(m => score === m.score)) {
+          showMessage()
+        }
+      }
+
+      // 更新最高分显示
+      function updateBestScoreDisplay() {
+        document.getElementById('best-score').textContent = bestScore
+      }
+
+      // 初始化时更新最高分显示
+      updateBestScoreDisplay()
+
+      // 添加星星特效
+      function createSparkle() {
+        const sparkle = document.createElement('div')
+        sparkle.className = 'sparkle'
+        sparkle.style.left = Math.random() * window.innerWidth + 'px'
+        sparkle.style.top = Math.random() * window.innerHeight + 'px'
+        document.body.appendChild(sparkle)
+        setTimeout(() => sparkle.remove(), 1500)
+      }
+
+      // 定期创建星星特效
+      setInterval(createSparkle, 300)
+
+      // 修改游戏区域大小
+      function updateGameSize() {
+        const gameContainer = document.getElementById('game-container')
+        gameContainer.style.width = window.innerWidth + 'px'
+        gameContainer.style.height = window.innerHeight + 'px'
+      }
+
+      // 初始化游戏大小
+      updateGameSize()
+      window.addEventListener('resize', updateGameSize)
+
+      // 创建下落物体
+      function createFallingObject() {
+        if (!gameActive) return
+
+        const random = Math.random()
+        let selectedObject
+        let cumulativeProbability = 0
+
+        for (const object of fallingObjects) {
+          cumulativeProbability += object.probability
+          if (random <= cumulativeProbability) {
+            selectedObject = object
+            break
+          }
+        }
+
+        const fallingObject = document.createElement('div')
+        fallingObject.className = `falling-object ${selectedObject.type}`
+        fallingObject.style.left = Math.random() * (gameContainer.offsetWidth - 40) + 'px'
+        fallingObject.style.top = '-40px'
+        gameContainer.appendChild(fallingObject)
+
+        let objectPosition = -40
+        const fallSpeed = 3
+        const fallInterval = setInterval(() => {
+          if (!gameActive) {
+            clearInterval(fallInterval)
+            fallingObject.remove()
+            return
+          }
+
+          objectPosition += fallSpeed
+          fallingObject.style.top = objectPosition + 'px'
+
+          // 检测碰撞
+          const characterRect = character.getBoundingClientRect()
+          const objectRect = fallingObject.getBoundingClientRect()
+
+          if (
+            objectRect.bottom >= characterRect.top &&
+            objectRect.top <= characterRect.bottom &&
+            objectRect.right >= characterRect.left &&
+            objectRect.left <= characterRect.right
+          ) {
+            clearInterval(fallInterval)
+            fallingObject.remove()
+
+            // 播放音效
+            selectedObject.sound.currentTime = 0
+            selectedObject.sound.play().catch((error) => console.log('音效播放失败:', error))
+
+            if (selectedObject.type === 'bomb') {
+              // 碰到炸弹直接失败
+              character.classList.add('shake')
+              setTimeout(() => character.classList.remove('shake'), 500)
+              showMessage('小心炸弹！')
+              endGame(false)
+              return
+            }
+
+            // 更新分数
+            score += selectedObject.points
+            scoreElement.textContent = `分数: ${score}`
+
+            // 如果是爱心，显示随机消息
+            if (selectedObject.type === 'heart') {
+              showMessage()
+            }
+
+            // 检查是否达到520分
+            if (score >= 520) {
+              endGame(true)
+            }
+          }
+
+          // 超出屏幕
+          if (objectPosition > gameContainer.offsetHeight) {
+            clearInterval(fallInterval)
+            fallingObject.remove()
+          }
+        }, 50)
+      }
+    </script>
+  </body>
+</html>
