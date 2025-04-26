@@ -874,7 +874,7 @@
           const seconds = timeLeft % 60
           timerElement.textContent = `时间: ${minutes}:${seconds.toString().padStart(2, '0')}`
 
-          // 检查是否达到5分20秒
+          // 检查是否达到5分20秒的特殊通关条件
           if (timeLeft === 320) {
             endGame(true)
           }
@@ -887,7 +887,7 @@
         })
       }
 
-      function endGame(isSpecialEnding = false) {
+      function endGame(isSpecialEnding = false, isBomb = false) {
         clearInterval(gameInterval)
         clearInterval(timerInterval)
         gameActive = false
@@ -897,16 +897,17 @@
           bestScore = score
           localStorage.setItem('bestScore', bestScore)
           updateBestScoreDisplay()
-          showVictoryScreen(isSpecialEnding)
+        }
+
+        if (isSpecialEnding) {
+          showVictoryScreen()
         } else {
-          showFailureScreen(isSpecialEnding)
+          showFailureScreen(isBomb)
         }
       }
 
-      function showVictoryScreen(isSpecialEnding) {
-        document.getElementById('victory-message').textContent = isSpecialEnding 
-          ? `通关成功！你是最棒的！爱你哦！💐` 
-          : `恭喜你创造了新纪录！获得了${score}分！💐`
+      function showVictoryScreen() {
+        document.getElementById('victory-message').textContent = `通关成功！你是最棒的！爱你哦！💐`
         document.getElementById('victory-screen').style.display = 'flex'
 
         // 创建彩带效果
@@ -924,10 +925,22 @@
         setTimeout(() => confetti.remove(), 5000)
       }
 
-      function showFailureScreen(isSpecialEnding) {
-        document.getElementById('failure-message').textContent = isSpecialEnding
-          ? `通关成功！你是最棒的！爱你哦！💐`
-          : `你获得了${score}分！最高纪录是${bestScore}分，继续加油！`
+      function showFailureScreen(isBomb) {
+        if (isBomb) {
+          document.getElementById('failure-screen').querySelector('h1').textContent = '游戏结束'
+          if (score > bestScore) {
+            document.getElementById('failure-message').textContent = `碰到了炸弹！不过你创造了新纪录${score}分！继续加油！`
+          } else {
+            document.getElementById('failure-message').textContent = `碰到了炸弹！你获得了${score}分，继续加油！`
+          }
+        } else {
+          document.getElementById('failure-screen').querySelector('h1').textContent = '继续加油！'
+          if (score > bestScore) {
+            document.getElementById('failure-message').textContent = `你创造了新纪录${score}分！继续加油！`
+          } else {
+            document.getElementById('failure-message').textContent = `你获得了${score}分！最高纪录是${bestScore}分，继续加油！`
+          }
+        }
         document.getElementById('failure-screen').style.display = 'flex'
       }
 
@@ -949,7 +962,13 @@
 
       // 更新分数显示
       function updateScoreDisplay() {
-        scoreElement.textContent = score
+        scoreElement.textContent = `分数: ${score}`
+        
+        // 检查是否达到520分
+        if (score >= 520) {
+          endGame(true)
+          return
+        }
         
         // 检查是否需要显示鼓励消息
         if (messages.some(m => score === m.score)) {
@@ -1050,7 +1069,7 @@
               character.classList.add('shake')
               setTimeout(() => character.classList.remove('shake'), 500)
               showMessage('小心炸弹！')
-              endGame(false)
+              endGame(false, true)
               return
             }
 
