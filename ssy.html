@@ -1012,7 +1012,12 @@
         gameContainer.appendChild(fallingObject)
 
         let objectPosition = -40
-        const fallSpeed = 3
+        // 基础速度
+        const baseSpeed = 3
+        // 每30秒增加0.2的速度
+        const speedIncrease = Math.floor(timeLeft / 30) * 0.2
+        // 最终速度 = 基础速度 + 增加的速度
+        const fallSpeed = baseSpeed + speedIncrease
         const fallInterval = setInterval(() => {
           if (!gameActive) {
             clearInterval(fallInterval)
